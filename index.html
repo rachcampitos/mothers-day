@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feliz Día de la Madre ♡</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Nunito:wght@300;400;500;600;700&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --cream:#FAF7F2; --blush:#F5D5DC; --rose:#C9879A;
+      --deep-rose:#8B3A52; --gold:#C9A96E; --dark:#2C1810;
+      --text:#3D2B1F; --text-light:#7A5C4F;
+    }
+    html { scroll-behavior:smooth; }
+    body { background:#0a0508; color:var(--text); font-family:'Nunito',sans-serif; overflow-x:hidden; }
+
+    @keyframes fadeUp    { from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none} }
+    @keyframes fadeIn    { from{opacity:0}to{opacity:1} }
+    @keyframes heartbeat { 0%,100%{transform:scale(1)}50%{transform:scale(1.2)} }
+    @keyframes handwrite { to { clip-path:inset(0 -4px 0 0); } }
+    @keyframes spin      { to { transform:rotate(360deg); } }
+    @keyframes kenBurns  { from{transform:scale(1) translate(0,0)} to{transform:scale(1.06) translate(-.5%,.5%)} }
+    @keyframes ringPulse {
+      0%  { box-shadow:0 4px 18px rgba(139,58,82,.4),0 0 0 0   rgba(139,58,82,.35); }
+      70% { box-shadow:0 4px 18px rgba(139,58,82,.4),0 0 0 12px rgba(139,58,82,0); }
+      100%{ box-shadow:0 4px 18px rgba(139,58,82,.4),0 0 0 0   rgba(139,58,82,0); }
+    }
+
+    /* LOADER */
+    #loader { position:fixed; inset:0; background:#0a0508; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.5rem; transition:opacity .8s ease,visibility .8s ease; }
+    #loader.hidden { opacity:0; visibility:hidden; }
+    .loader-heart { font-size:3rem; color:var(--blush); animation:heartbeat 1.2s ease-in-out infinite; }
+    .loader-text  { font-family:'Playfair Display',serif; font-style:italic; color:rgba(255,255,255,.4); font-size:1rem; letter-spacing:.3em; }
+
+    /* PETALS */
+    #petals-canvas { position:fixed; inset:0; pointer-events:none; z-index:2; }
+
+    /* ── START OVERLAY ────────────────────────────────────────── */
+    #start-overlay {
+      position:fixed; inset:0; z-index:8000;
+      background:rgba(8,4,6,.96);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:clamp(1rem,3svh,1.8rem); cursor:pointer;
+      transition:opacity .9s ease, visibility .9s ease;
+    }
+    #start-overlay.so-hidden { opacity:0; visibility:hidden; pointer-events:none; }
+    .so-heart  { font-size:clamp(2.2rem,7vw,3rem); color:var(--blush); animation:heartbeat 1.8s ease-in-out infinite; }
+    .so-date   { font-size:clamp(.62rem,1.8vw,.72rem); letter-spacing:.45em; text-transform:uppercase; color:rgba(245,213,220,.4); }
+    .so-title  { font-family:'Playfair Display',serif; font-style:italic; font-size:clamp(1.4rem,5vw,2.2rem); color:rgba(255,255,255,.88); text-align:center; padding:0 1.5rem; }
+    .so-cta    { font-size:clamp(.62rem,1.6vw,.72rem); letter-spacing:.45em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-top:.4rem; animation:fadeIn 2s ease-in-out infinite alternate; }
+
+    /* ── EXPERIENCE SECTION ───────────────────────────────────── */
+    .exp-section {
+      position:relative; z-index:3;
+      height:100svh; min-height:520px;
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden; background:#0a0508;
+    }
+
+    .exp-bg {
+      position:absolute; inset:-50px; z-index:0;
+      background-size:cover; background-position:center;
+      filter:blur(42px) brightness(.32) saturate(1.4);
+      transform:scale(1.12);
+      transition:background-image .9s ease;
+    }
+    .exp-overlay {
+      position:absolute; inset:0; z-index:1; pointer-events:none;
+      background:radial-gradient(ellipse at center,rgba(0,0,0,.05) 10%,rgba(0,0,0,.65) 100%);
+    }
+
+    /* ── Center column: photo on top, text/lyrics below ── */
+    .exp-center {
+      position:relative; z-index:2;
+      display:flex; flex-direction:column; align-items:center;
+      gap:clamp(1.4rem,3.8svh,2.6rem);
+      padding:clamp(2rem,5svh,4rem) 1.5rem clamp(1.5rem,4svh,3rem);
+      width:100%; max-width:560px;
+    }
+
+    /* ── Photo area: intro + cycling crossfade inside this box ── */
+    .exp-photo-area {
+      flex-shrink:0; position:relative;
+      width:min(220px,60vw); height:min(220px,60vw);
+      border-radius:14px;
+      box-shadow:0 8px 40px rgba(0,0,0,.55),0 2px 10px rgba(0,0,0,.4);
+      overflow:hidden;
+    }
+
+    .exp-intro-video,
+    .exp-cycle-img {
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      pointer-events:none;
+      transition:opacity 1.1s ease;
+    }
+    .exp-intro-video { z-index:2; opacity:0; }
+    .exp-cycle-img   { z-index:1; opacity:0; }
+    .exp-cycle-img.kb-on { animation:kenBurns 12s ease-in-out forwards; }
+
+    /* ── Text area: intro text ↔ lyrics occupy the same space ── */
+    .exp-text-area {
+      position:relative; width:100%;
+      height:clamp(11rem,28svh,17rem);
+      flex-shrink:0;
+    }
+
+    .exp-intro-text {
+      position:absolute; inset:0;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:clamp(.5rem,1.4svh,.85rem); text-align:center;
+      transition:opacity 1s ease;
+    }
+    .exp-intro-text.out { opacity:0; pointer-events:none; }
+
+    .exp-intro-day {
+      font-size:clamp(.6rem,1.7vw,.72rem); letter-spacing:.42em;
+      text-transform:uppercase; color:rgba(245,213,220,.45);
+      opacity:0; animation:fadeIn .8s ease forwards .9s;
+    }
+    .exp-hw-wrap { overflow:hidden; }
+    .exp-hw-1 {
+      font-family:'Caveat',cursive; font-size:clamp(2rem,8vw,4.5rem);
+      color:white; display:block; line-height:1.05;
+      clip-path:inset(0 100% 0 0);
+      animation:handwrite 1.6s cubic-bezier(.25,.46,.45,.94) forwards 1.1s;
+    }
+    .exp-hw-2 {
+      font-family:'Caveat',cursive; font-size:clamp(1.5rem,6vw,3.2rem);
+      color:var(--blush); font-style:italic; display:block; line-height:1.1;
+      clip-path:inset(0 100% 0 0);
+      animation:handwrite 1.8s cubic-bezier(.25,.46,.45,.94) forwards 2.2s;
+    }
+    .exp-intro-sub {
+      font-family:'Playfair Display',serif; font-style:italic;
+      font-size:clamp(.82rem,2.2vw,1.05rem); color:rgba(255,255,255,.6);
+      opacity:0; animation:fadeIn .9s ease forwards 3.8s;
+    }
+    .exp-intro-date {
+      font-size:clamp(.58rem,1.5vw,.68rem); letter-spacing:.38em;
+      text-transform:uppercase; color:var(--gold); opacity:0;
+      animation:fadeIn .8s ease forwards 4.1s;
+    }
+
+    /* ── Lyrics (overlaid on same text area) ── */
+    .exp-text-area { background:transparent; }
+    .exp-lyrics-col {
+      position:absolute; inset:0;
+      overflow-y:auto; overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch; scrollbar-width:none;
+      opacity:0; transition:opacity 1.2s ease;
+      background:transparent;
+    }
+    .exp-lyrics-col.lyr-visible { opacity:1; }
+    .exp-lyrics-col::-webkit-scrollbar { display:none; }
+
+    .exp-lyrics-inner {
+      padding:3.5rem 1.5rem;
+      display:flex; flex-direction:column; gap:.1rem; text-align:center;
+    }
+
+    /* All lines same size — only color changes, no layout shift */
+    .lyr-line {
+      font-family:'Playfair Display',serif; font-style:italic;
+      font-size:clamp(1.3rem,4.5vw,1.85rem);
+      color:rgba(245,213,220,.13);
+      line-height:1.65; padding:.18rem 0;
+      transition:color .9s ease;
+      cursor:default; user-select:none;
+    }
+    .lyr-line.lyr-past { color:rgba(245,213,220,.07); }
+    .lyr-line.lyr-active { color:var(--blush); }
+
+    /* ── MOBILE (≤ 700px) ── */
+    @media (max-width:700px) {
+      .exp-center { gap:clamp(1.1rem,3svh,2rem); padding:clamp(1.5rem,4svh,3rem) 1.2rem; }
+      .exp-photo-area { width:min(200px,56vw); height:min(200px,56vw); }
+      .exp-text-area { height:clamp(9rem,24svh,14rem); }
+      .exp-hw-1 { font-size:clamp(1.8rem,9vw,3rem); }
+      .exp-hw-2 { font-size:clamp(1.3rem,7vw,2.2rem); }
+      .exp-lyrics-inner { padding:3rem 1.1rem; }
+      .lyr-line { font-size:clamp(1.1rem,5.5vw,1.55rem); }
+      .lyr-line.lyr-active { color:var(--blush); }
+    }
+
+    /* ── SHARED (for sections below) ── */
+    .reveal { opacity:0; transform:translateY(36px); transition:opacity .9s cubic-bezier(.25,.46,.45,.94),transform .9s cubic-bezier(.25,.46,.45,.94); }
+    .reveal.visible { opacity:1; transform:none; }
+    .reveal-delay-1 { transition-delay:.12s; }
+    .reveal-delay-2 { transition-delay:.24s; }
+    .reveal-delay-3 { transition-delay:.36s; }
+    .section-eyebrow { text-align:center; font-size:clamp(.68rem,1.8vw,.78rem); letter-spacing:.45em; text-transform:uppercase; color:var(--rose); margin-bottom:.6rem; }
+    .section-title   { text-align:center; font-family:'Playfair Display',serif; font-size:clamp(1.8rem,5vw,3.5rem); color:var(--dark); line-height:1.2; margin-bottom:2.5rem; }
+    .section-title em { font-style:italic; color:var(--rose); }
+
+    /* ── LETTER ── */
+    .letter-section { position:relative; z-index:3; padding:clamp(3rem,7vw,5rem) 1.2rem clamp(3rem,7vw,6rem); background:var(--cream); }
+    .letter-card { max-width:760px; margin:0 auto; background:white; border-radius:20px; padding:clamp(2rem,6vw,5rem) clamp(1.5rem,5vw,4rem); box-shadow:0 2px 4px rgba(139,58,82,.05),0 8px 24px rgba(139,58,82,.08),0 28px 70px rgba(44,24,16,.09); position:relative; }
+    .letter-badge { position:absolute; top:-1.5rem; left:50%; transform:translateX(-50%); width:3rem; height:3rem; background:linear-gradient(135deg,var(--deep-rose),#b05070); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:white; box-shadow:0 6px 18px rgba(139,58,82,.35); }
+    .letter-greeting  { font-family:'Playfair Display',serif; font-style:italic; font-size:clamp(1.4rem,4vw,2.3rem); color:var(--deep-rose); margin-bottom:1.5rem; }
+    .letter-body      { font-size:clamp(.95rem,2vw,1.12rem); line-height:1.95; color:var(--text); }
+    .letter-body p    { margin-bottom:1.2rem; }
+    .letter-body p:last-child { margin-bottom:0; }
+    .letter-divider   { width:44px; height:2px; background:linear-gradient(to right,var(--rose),transparent); margin:1.8rem 0; border-radius:2px; }
+    .letter-signature { font-family:'Playfair Display',serif; font-style:italic; font-size:clamp(1.1rem,3vw,1.3rem); color:var(--deep-rose); line-height:1.7; }
+    .letter-signature strong { font-style:normal; font-weight:600; }
+
+    /* ── VIDEO (after letter) ── */
+    .video-section { position:relative; z-index:3; padding:clamp(3rem,7vw,5rem) 1.5rem clamp(3.5rem,8vw,7rem); text-align:center; background:linear-gradient(135deg,rgba(201,135,154,.06),rgba(201,169,110,.06)); }
+    .video-frame-wrap { position:relative; max-width:520px; margin:2.5rem auto 0; }
+    .video-border       { position:absolute; inset:-6px;  border-radius:22px; border:1.5px solid var(--gold); opacity:.45; pointer-events:none; }
+    .video-border-inner { position:absolute; inset:-12px; border-radius:28px; border:1px   solid var(--gold); opacity:.18; pointer-events:none; }
+    .video-frame-wrap video { width:100%; border-radius:14px; display:block; filter:brightness(.92) saturate(1.18) contrast(1.06); box-shadow:0 20px 50px rgba(44,24,16,.18),0 6px 16px rgba(44,24,16,.08); }
+
+    /* ── CLOSING ── */
+    .closing-section { position:relative; z-index:3; padding:clamp(3rem,7vw,4rem) 1.5rem clamp(5rem,10vw,9rem); text-align:center; background:linear-gradient(to bottom,var(--cream),rgba(245,213,220,.35)); }
+    .closing-hearts  { font-size:clamp(1.4rem,4vw,1.8rem); letter-spacing:.6rem; color:var(--rose); margin-bottom:1.3rem; display:block; }
+    .closing-hearts span { display:inline-block; animation:heartbeat 2s ease-in-out infinite; }
+    .closing-hearts span:nth-child(2) { animation-delay:.3s; }
+    .closing-hearts span:nth-child(3) { animation-delay:.6s; }
+    .closing-title    { font-family:'Playfair Display',serif; font-size:clamp(1.7rem,5vw,3.5rem); color:rgba(255,255,255,.9); margin-bottom:.6rem; }
+    .closing-subtitle { font-size:clamp(.72rem,2vw,.88rem); letter-spacing:.35em; text-transform:uppercase; color:rgba(245,213,220,.52); margin-bottom:2.5rem; }
+    .closing-names    { font-family:'Playfair Display',serif; font-style:italic; font-size:clamp(1.1rem,3vw,1.4rem); color:var(--blush); }
+
+    /* ── FINAL SECTION (letter + closing merged) ── */
+    .final-section {
+      position:relative; z-index:3;
+      padding:clamp(3rem,7vw,5rem) 1.2rem 0;
+      background:linear-gradient(to bottom,var(--cream),rgba(245,213,220,.38));
+    }
+    .final-bridge {
+      display:flex; align-items:center; justify-content:center;
+      gap:.9rem; margin:clamp(2.2rem,5.5vw,3.5rem) auto;
+    }
+    .final-bridge::before,
+    .final-bridge::after {
+      content:''; flex:1; max-width:clamp(50px,15vw,110px);
+      height:1px;
+      background:linear-gradient(to right,transparent,rgba(201,135,154,.38));
+    }
+    .final-bridge::after { transform:scaleX(-1); }
+    .bridge-heart { color:var(--rose); opacity:.48; font-size:.95rem; }
+    .final-close {
+      text-align:center;
+      padding:clamp(1rem,3vw,2rem) 1.5rem clamp(5rem,10vw,9rem);
+    }
+
+    /* ── MUSIC ── */
+    .music-player { position:fixed; bottom:1.2rem; right:2rem; z-index:5000; display:flex; align-items:center; }
+    .music-toggle { width:clamp(2.8rem,8vw,3.2rem); height:clamp(2.8rem,8vw,3.2rem); border-radius:50%; flex-shrink:0; background:linear-gradient(135deg,var(--deep-rose),#b05070); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:clamp(1.1rem,3.5vw,1.25rem); color:white; box-shadow:0 4px 18px rgba(139,58,82,.4); transition:transform .2s,box-shadow .2s; position:relative; z-index:2; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+    .music-toggle:hover  { transform:scale(1.08); }
+    .music-toggle:active { transform:scale(.94); }
+    .music-toggle.playing { animation:ringPulse 2s ease-out infinite; }
+    .music-info { max-width:0; overflow:hidden; transition:max-width .45s cubic-bezier(.25,.46,.45,.94),opacity .3s ease,padding .45s ease; opacity:0; background:white; border-radius:0 2rem 2rem 0; margin-left:-1.3rem; padding:0; display:flex; flex-direction:column; justify-content:center; gap:4px; white-space:nowrap; box-shadow:3px 4px 18px rgba(0,0,0,.1); }
+    .music-player.open .music-info { max-width:clamp(150px,45vw,210px); opacity:1; padding:.4rem clamp(.8rem,2vw,1.1rem) .4rem 2rem; }
+    .music-title     { font-size:clamp(.68rem,2vw,.76rem); font-weight:700; color:var(--dark); }
+    .music-prog-track{ height:2px; background:rgba(0,0,0,.08); border-radius:2px; width:clamp(90px,30vw,130px); overflow:hidden; margin-top:2px; }
+    .music-prog-bar  { height:100%; background:linear-gradient(to right,var(--rose),var(--deep-rose)); width:0%; border-radius:2px; }
+    .vinyl-icon { display:block; line-height:1; }
+    .music-toggle.playing .vinyl-icon { animation:spin 3s linear infinite; }
+
+    @media (prefers-reduced-motion:reduce) {
+      .reveal { transition:opacity .4s ease; transform:none!important; }
+      .exp-hw-1, .exp-hw-2 { animation-duration:.01s; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="loader"><div class="loader-heart">♡</div><p class="loader-text">Preparando algo especial…</p></div>
+<canvas id="petals-canvas"></canvas>
+
+<!-- START OVERLAY -->
+<div id="start-overlay">
+  <div class="so-heart">♡</div>
+  <p class="so-date">Domingo · 10 de Mayo · 2026</p>
+  <p class="so-title">Un regalo para ti,<br>mi amor</p>
+  <p class="so-cta">Toca para comenzar</p>
+</div>
+
+<!-- EXPERIENCE -->
+<section class="exp-section" id="exp-section">
+  <div class="exp-bg" id="exp-bg"></div>
+  <div class="exp-overlay"></div>
+
+  <div class="exp-center">
+    <!-- Photo area: intro video and cycling photos crossfade here -->
+    <div class="exp-photo-area" id="exp-photo-area">
+      <video class="exp-intro-video" id="exp-intro-video" autoplay muted playsinline loop></video>
+      <img class="exp-cycle-img" id="exp-cycle-img" src="" alt="" draggable="false">
+    </div>
+
+    <!-- Text area: intro text fades out, lyrics fade in (same space) -->
+    <div class="exp-text-area">
+      <div class="exp-intro-text" id="exp-intro-text">
+        <p class="exp-intro-day">Domingo · 10 de Mayo · 2026</p>
+        <div class="exp-hw-wrap">
+          <span class="exp-hw-1">Para ti,</span>
+          <span class="exp-hw-2">que lo eres todo</span>
+        </div>
+        <p class="exp-intro-sub">Feliz Día de la Madre, mi amor</p>
+        <p class="exp-intro-date">— Raúl y Leonardo ♡</p>
+      </div>
+
+      <div class="exp-lyrics-col" id="exp-lyrics-col">
+        <div class="exp-lyrics-inner" id="exp-lyrics-inner"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section class="final-section">
+  <div class="letter-card reveal">
+    <div class="letter-badge">♡</div>
+    <p class="letter-greeting">Mi amor,</p>
+    <div class="letter-body">
+      <p>Hay personas que llegan a la vida y la transforman para siempre. Tú eres una de esas personas — pero lo que más me asombra es que lo haces sin siquiera intentarlo. Lo llevas puesto.</p>
+      <p>Te veo cada día darlo todo: con tus manos que abrazan, con tu risa que ilumina cualquier cuarto, con tu paciencia que parece no tener límites. Eres la primera voz que él busca en la mañana, el refugio al que siempre quiere volver, el lugar más seguro del mundo.</p>
+      <p>Gracias por elegir ser mamá con todo tu corazón. Por las noches sin dormir, los besos de más, los momentos en los que nadie más te ve y aun así lo das todo. Gracias por ser exactamente quien eres.</p>
+      <p>Hoy y siempre: te amamos profundamente, sin medida, sin condición.</p>
+    </div>
+    <div class="letter-divider"></div>
+    <p class="letter-signature">Con todo el amor del mundo,<br><strong>Raúl y Leonardo</strong> ♡</p>
+  </div>
+
+  <div class="final-bridge reveal">
+    <span class="bridge-heart">♡</span>
+  </div>
+
+  <div class="final-close">
+    <div class="closing-hearts reveal"><span>♡</span><span>♡</span><span>♡</span></div>
+    <h2 class="closing-title reveal reveal-delay-1">Feliz Día de la Madre</h2>
+    <p class="closing-subtitle reveal reveal-delay-2">Te amamos hoy, mañana y siempre</p>
+    <p class="closing-names reveal reveal-delay-3">— Raúl y Leonardo</p>
+  </div>
+</section>
+
+<!-- MUSIC -->
+<div class="music-player" id="music-player">
+  <button class="music-toggle" id="music-toggle" aria-label="Reproducir música">
+    <span class="vinyl-icon">♫</span>
+  </button>
+  <div class="music-info">
+    <span class="music-title">Una Emoción para Siempre</span>
+    <div class="music-prog-track"><div class="music-prog-bar" id="music-prog"></div></div>
+  </div>
+  <audio id="audio" loop preload="metadata"></audio>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const IMAGES = [
+  'WhatsApp Image 2026-05-08 at 8.43.39 PM.jpeg',
+  'WhatsApp Image 2026-05-08 at 8.43.39 PM (1).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.43.39 PM (2).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.00 PM.jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.00 PM (1).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM.jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM (1).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM (2).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM (3).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM (4).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM (5).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM (6).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM (7).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM (8).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM (9).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM (10).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM (11).jpeg',
+  'WhatsApp Image 2026-05-08 at 8.49.01 PM (12).jpeg',
+];
+const VIDEO = 'WhatsApp Video 2026-05-08 at 8.50.03 PM.mp4';
+const AUDIO = 'Una Emocion para Siempre.mp3';
+
+function enc(n) { return 'images/' + encodeURIComponent(n); }
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () =>
+  setTimeout(() => document.getElementById('loader').classList.add('hidden'), 900));
+document.getElementById('audio').src = 'audio/' + encodeURIComponent(AUDIO);
+
+// ── MUSIC ─────────────────────────────────────────────────────────────────────
+const audio   = document.getElementById('audio');
+const player  = document.getElementById('music-player');
+const toggle  = document.getElementById('music-toggle');
+const progBar = document.getElementById('music-prog');
+let musicOn = false;
+
+function startMusic() {
+  if (musicOn) return;
+  audio.play().then(() => {
+    musicOn = true;
+    toggle.classList.add('playing');
+    player.classList.add('open');
+    setTimeout(() => player.classList.remove('open'), 4000);
+  }).catch(() => {});
+}
+function stopMusic() {
+  audio.pause(); musicOn = false;
+  toggle.classList.remove('playing');
+  player.classList.remove('open');
+}
+toggle.addEventListener('click', () => musicOn ? stopMusic() : startMusic());
+audio.addEventListener('timeupdate', () => {
+  if (audio.duration) progBar.style.width = (audio.currentTime / audio.duration * 100) + '%';
+});
+
+// ── EXPERIENCE ────────────────────────────────────────────────────────────────
+function initExperience() {
+  const LYRICS = [
+    { t:  16.87, line: "Me gustaría recordarte así, con la sonrisa enamorada" },
+    { t:  24.87, line: "Como si el sol hubiese salido aquí, dentro de tu mirada" },
+    { t:  32.89, line: "Me gustaría recordarte, ya ves, con una historia importante y sincera" },
+    { t:  40.93, line: "Aunque se viene el sentimiento, ahora es como brisa ligera" },
+    { t:  48.93, line: "Estoy pensando en palabras de adiós que dan un dolor intenso" },
+    { t:  56.93, line: "Pero si buscas en él, sé que encontrarás agua en el desierto" },
+    { t:  64.95, line: "Hay amores que te darán una emoción para siempre" },
+    { t:  72.95, line: "Momentos que quedarán así, grabados en la mente" },
+    { t:  81.00, line: "Hay amores que dejarán una canción para siempre" },
+    { t:  88.98, line: "Palabras que quedarán así, muy dentro de la gente" },
+    { t: 100.43, line: "No, no" },
+    { t: 112.98, line: "Me gustaría poder dar mucho más, mucho más tiempo del que puedo darte" },
+    { t: 121.00, line: "Pero en mi mundo no estás tan solo tú y ahora debo dejarte" },
+    { t: 128.97, line: "Cruzaré mares y montes que ahora yo quiero ver de nuevo" },
+    { t: 137.08, line: "Muchos amigos me esperan para inventar juntos otros juegos" },
+    { t: 145.08, line: "Hay amores que te darán una emoción para siempre" },
+    { t: 153.02, line: "Momentos que quedarán así, grabados en la mente" },
+    { t: 161.09, line: "Hay amores que te harán una canción para siempre" },
+    { t: 169.03, line: "Palabras que quedarán así, muy dentro de la gente" },
+    { t: 179.58, line: "Muy dentro de la gente" },
+    { t: 193.13, line: "Hay amores que te darán una emoción para siempre" },
+    { t: 201.09, line: "Momentos bellos que quedarán así, grabados en la mente" },
+    { t: 211.58, line: "No, no, no, no, nooo" },
+    { t: 217.08, line: "Palabras que quedarán así, muy dentro de la gente" },
+    { t: 227.58, line: "No, no, no, no, nooo" },
+  ];
+
+  // Photo changes every ~12s starting at 16s
+  const PHOTO_TIMES = IMAGES.map((_, i) => 16 + i * 12);
+
+  // DOM refs
+  const expSection  = document.getElementById('exp-section');
+  const expBg       = document.getElementById('exp-bg');
+  const introVideo  = document.getElementById('exp-intro-video');
+  const expCycleImg = document.getElementById('exp-cycle-img');
+  const introText   = document.getElementById('exp-intro-text');
+  const lyricsCol   = document.getElementById('exp-lyrics-col');
+  const lyricsInner = document.getElementById('exp-lyrics-inner');
+
+  // Custom object-position per image index (for photos where auto-crop cuts the face)
+  const CROP = { 15: 'center 70%' };
+
+  // Initial background (blurred) + video + first cycling photo
+  const introSrc = enc(IMAGES[0]);
+  expBg.style.backgroundImage = `url('${introSrc}')`;
+  introVideo.src = enc(VIDEO);
+  expCycleImg.src = enc(IMAGES[0]);
+
+  // Fade intro video in
+  setTimeout(() => { introVideo.style.opacity = '1'; }, 400);
+
+  // Build lyric lines
+  LYRICS.forEach((l, i) => {
+    const p = document.createElement('p');
+    p.className = 'lyr-line';
+    p.textContent = l.line;
+    p.id = `lyr-${i}`;
+    lyricsInner.appendChild(p);
+  });
+
+  // State
+  let revealed    = false;
+  let activePhoto = -1;
+  let activeLyric = -1;
+  let prevTime    = 0;
+
+  function doReveal() {
+    if (revealed) return;
+    revealed = true;
+    activePhoto = 0; // IMAGES[0] already loaded — skip the first setPhoto call
+    // Slightly enlarge photo area
+    expSection.classList.add('active');
+    // Crossfade: intro video out, first cycling photo in
+    introVideo.style.opacity = '0';
+    expCycleImg.style.opacity = '1';
+    // Start Ken Burns on first cycling photo
+    expCycleImg.classList.remove('kb-on');
+    expCycleImg.offsetWidth;
+    expCycleImg.classList.add('kb-on');
+    // After photo settles, swap intro text → lyrics
+    setTimeout(() => {
+      introText.classList.add('out');
+      lyricsCol.classList.add('lyr-visible');
+    }, 850);
+  }
+
+  function setPhoto(idx) {
+    if (idx === activePhoto || idx >= IMAGES.length) return;
+    activePhoto = idx;
+    const src = enc(IMAGES[idx]);
+    expBg.style.backgroundImage = `url('${src}')`;
+    expCycleImg.style.opacity = '0';
+    setTimeout(() => {
+      expCycleImg.src = src;
+      expCycleImg.style.objectPosition = CROP[idx] || 'center';
+      expCycleImg.style.opacity = '1';
+      expCycleImg.classList.remove('kb-on');
+      expCycleImg.offsetWidth;
+      expCycleImg.classList.add('kb-on');
+    }, 450);
+  }
+
+  function setLyric(idx) {
+    if (idx === activeLyric) return;
+    if (activeLyric >= 0) {
+      const prev = document.getElementById(`lyr-${activeLyric}`);
+      if (prev) { prev.classList.remove('lyr-active'); prev.classList.add('lyr-past'); }
+    }
+    activeLyric = idx;
+    if (idx < 0) return;
+    const el = document.getElementById(`lyr-${idx}`);
+    if (!el) return;
+    el.classList.remove('lyr-past');
+    el.classList.add('lyr-active');
+    // Scroll active lyric to center — custom eased scroll for smoothness
+    const colH    = lyricsCol.clientHeight;
+    const elRect  = el.getBoundingClientRect();
+    const colRect = lyricsCol.getBoundingClientRect();
+    const target  = lyricsCol.scrollTop + (elRect.top - colRect.top) - colH / 2 + el.offsetHeight / 2;
+    const start   = lyricsCol.scrollTop;
+    const delta   = target - start;
+    const dur     = 900;
+    const t0      = performance.now();
+    (function step(now) {
+      const p = Math.min((now - t0) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 3); // ease-out cubic
+      lyricsCol.scrollTop = start + delta * ease;
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+
+  audio.addEventListener('timeupdate', () => {
+    const t = audio.currentTime;
+
+    // Loop detection
+    if (prevTime > 10 && t < 2) {
+      revealed = false; activePhoto = -1; activeLyric = -1;
+      expSection.classList.remove('active');
+      introVideo.style.opacity = '1';
+      expCycleImg.style.opacity = '0';
+      introText.classList.remove('out');
+      lyricsCol.classList.remove('lyr-visible');
+      document.querySelectorAll('.lyr-line').forEach(el => el.classList.remove('lyr-active','lyr-past'));
+      lyricsCol.scrollTop = 0;
+      expBg.style.backgroundImage = `url('${introSrc}')`;
+
+    }
+    prevTime = t;
+
+    if (t >= 13.5) doReveal();
+
+    // Photo cycling (every 12s starting at 16s)
+    let pIdx = -1;
+    for (let i = 0; i < PHOTO_TIMES.length; i++) {
+      if (t >= PHOTO_TIMES[i]) pIdx = i; else break;
+    }
+    if (pIdx >= 0) setPhoto(pIdx);
+
+    // Lyrics sync
+    let lIdx = -1;
+    for (let i = 0; i < LYRICS.length; i++) {
+      if (t >= LYRICS[i].t) lIdx = i; else break;
+    }
+    setLyric(lIdx);
+  });
+}
+
+// ── START OVERLAY ─────────────────────────────────────────────────────────────
+document.getElementById('start-overlay').addEventListener('click', () => {
+  startMusic();
+  document.getElementById('start-overlay').classList.add('so-hidden');
+});
+
+initExperience();
+
+// ── SCROLL REVEAL ─────────────────────────────────────────────────────────────
+const revIO = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revIO.unobserve(e.target); } });
+}, { threshold: .1 });
+document.querySelectorAll('.reveal').forEach(el => revIO.observe(el));
+
+// ── PETALS ────────────────────────────────────────────────────────────────────
+const canvas = document.getElementById('petals-canvas');
+const ctx    = canvas.getContext('2d');
+let petals   = [];
+const PCOLS  = ['#F5D5DC','#F2C4CE','#E8BCC8','#D4A0B0','#C9879A','#F8E2E8'];
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas, { passive: true });
+function mkPetal() {
+  return { x:Math.random()*canvas.width, y:-20-Math.random()*60, sz:Math.random()*9+4,
+    vy:Math.random()*.9+.35, vx:(Math.random()-.5)*.55,
+    rot:Math.random()*Math.PI*2, rv:(Math.random()-.5)*.04,
+    a:Math.random()*.42+.14, w:Math.random()*Math.PI*2,
+    col:PCOLS[Math.floor(Math.random()*PCOLS.length)] };
+}
+(function loop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (petals.length < 20 && Math.random() < .05) petals.push(mkPetal());
+  petals = petals.filter(p => p.y < canvas.height + 30);
+  petals.forEach(p => {
+    p.y += p.vy; p.w += .022; p.x += p.vx + Math.sin(p.w) * .4; p.rot += p.rv;
+    ctx.save(); ctx.globalAlpha = p.a; ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+    ctx.fillStyle = p.col; ctx.beginPath();
+    ctx.ellipse(0, 0, p.sz * .42, p.sz, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  });
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
