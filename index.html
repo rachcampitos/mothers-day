@@ -84,7 +84,7 @@
     /* ── Photo area: intro + cycling crossfade inside this box ── */
     .exp-photo-area {
       flex-shrink:0; position:relative;
-      width:min(220px,60vw); height:min(220px,60vw);
+      width:min(250px,64vw); height:min(250px,64vw);
       border-radius:14px;
       box-shadow:0 8px 40px rgba(0,0,0,.55),0 2px 10px rgba(0,0,0,.4);
       overflow:hidden;
@@ -178,7 +178,7 @@
     /* ── MOBILE (≤ 700px) ── */
     @media (max-width:700px) {
       .exp-center { gap:clamp(1.1rem,3svh,2rem); padding:clamp(1.5rem,4svh,3rem) 1.2rem; }
-      .exp-photo-area { width:min(200px,56vw); height:min(200px,56vw); }
+      .exp-photo-area { width:min(250px,64vw); height:min(250px,64vw); }
       .exp-text-area { height:clamp(9rem,24svh,14rem); }
       .exp-hw-1 { font-size:clamp(1.8rem,9vw,3rem); }
       .exp-hw-2 { font-size:clamp(1.3rem,7vw,2.2rem); }
@@ -453,7 +453,7 @@ function initExperience() {
   const lyricsInner = document.getElementById('exp-lyrics-inner');
 
   // Custom object-position per image index (for photos where auto-crop cuts the face)
-  const CROP = { 15: 'center 70%' };
+  const CROP = { 11: 'center 15%', 15: 'center 18%' };
 
   // Initial background (blurred) + video + first cycling photo
   const introSrc = enc(IMAGES[0]);
