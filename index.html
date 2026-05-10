@@ -373,6 +373,20 @@ const IMAGES = [
   'WhatsApp Image 2026-05-08 at 8.49.01 PM (10).jpeg',
   'WhatsApp Image 2026-05-08 at 8.49.01 PM (11).jpeg',
   'WhatsApp Image 2026-05-08 at 8.49.01 PM (12).jpeg',
+  'WhatsApp Image 2026-05-09 at 10.25.32 PM.jpeg',
+  'WhatsApp Image 2026-05-09 at 10.25.32 PM (1).jpeg',
+  'WhatsApp Image 2026-05-09 at 10.25.32 PM (2).jpeg',
+  'WhatsApp Image 2026-05-09 at 10.25.32 PM (3).jpeg',
+  'WhatsApp Image 2026-05-09 at 10.25.32 PM (4).jpeg',
+  'WhatsApp Image 2026-05-09 at 10.25.32 PM (5).jpeg',
+  'WhatsApp Image 2026-05-09 at 10.25.33 PM.jpeg',
+  'WhatsApp Image 2026-05-09 at 10.25.33 PM (1).jpeg',
+  'WhatsApp Image 2026-05-09 at 10.25.33 PM (2).jpeg',
+  'WhatsApp Image 2026-05-09 at 10.25.33 PM (3).jpeg',
+  'WhatsApp Image 2026-05-09 at 10.29.12 PM.jpeg',
+  'WhatsApp Image 2026-05-09 at 10.29.12 PM (1).jpeg',
+  'WhatsApp Image 2026-05-09 at 10.29.12 PM (2).jpeg',
+  'WhatsApp Image 2026-05-09 at 10.29.12 PM (3).jpeg',
 ];
 const VIDEO = 'WhatsApp Video 2026-05-08 at 8.50.03 PM.mp4';
 const AUDIO = 'Una Emocion para Siempre.mp3';
@@ -440,8 +454,8 @@ function initExperience() {
     { t: 227.58, line: "No, no, no, no, nooo" },
   ];
 
-  // Photo changes every ~12s starting at 16s
-  const PHOTO_TIMES = IMAGES.map((_, i) => 16 + i * 12);
+  // 32 photos × 7s = 233s, covers the full song from 16s to end
+  const PHOTO_TIMES = IMAGES.map((_, i) => 16 + i * 7);
 
   // DOM refs
   const expSection  = document.getElementById('exp-section');
@@ -453,7 +467,7 @@ function initExperience() {
   const lyricsInner = document.getElementById('exp-lyrics-inner');
 
   // Custom object-position per image index (for photos where auto-crop cuts the face)
-  const CROP = { 11: 'center 15%', 15: 'center 18%' };
+  const CROP = { 11: 'center 15%', 15: 'center 18%', 18: 'center 15%', 28: 'center 12%' };
 
   // Initial background (blurred) + video + first cycling photo
   const introSrc = enc(IMAGES[0]);
